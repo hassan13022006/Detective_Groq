@@ -41,7 +41,7 @@ export function NotebookDrawer({
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-noir-900 border-l border-noir-800 shadow-2xl flex flex-col font-typewriter">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-noir-900 border-l border-noir-800 shadow-2xl flex flex-col font-typewriter max-h-[100dvh]">
       {/* Drawer Header */}
       <div className="p-4 bg-noir-950 border-b border-noir-800 flex items-center justify-between">
         <div className="flex items-center gap-2">

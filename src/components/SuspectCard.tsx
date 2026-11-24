@@ -28,41 +28,41 @@ export function SuspectCard({
 
   return (
     <div
-      className={`relative bg-noir-900 border rounded-lg p-4 transition-all duration-200 flex flex-col justify-between shadow-sm ${
+      className={`relative bg-noir-900 border rounded-lg p-4 sm:p-5 transition-all duration-200 flex flex-col justify-between shadow-sm ${
         isActive
           ? "border-amber-500/60 ring-1 ring-amber-500/40 bg-noir-850"
           : "border-noir-800 hover:border-noir-700"
       }`}
     >
       <div>
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-noir-800">
+        <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-noir-800">
           <div className="flex items-center gap-2">
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-typewriter font-bold bg-noir-800 text-noir-300">
+            <span className="px-2 py-0.5 rounded text-[11px] font-typewriter font-bold bg-noir-800 text-noir-300">
               SUSPECT #{index + 1}
             </span>
-            <span className="text-[11px] font-typewriter text-amber-500/90 font-medium">
+            <span className="text-xs font-typewriter text-amber-500 font-medium">
               {suspect.role}
             </span>
           </div>
 
-          <span className={`text-[10px] font-typewriter ${stressColor}`}>
+          <span className={`text-xs font-mono ${stressColor}`}>
             Stress: {nervousness}%
           </span>
         </div>
 
-        <h3 className="text-base font-bold text-noir-100 font-sans mb-1 tracking-tight">
+        <h3 className="text-base sm:text-lg font-bold text-noir-100 font-sans mb-1.5 tracking-tight">
           {suspect.name}
         </h3>
 
-        <p className="text-xs text-noir-300 font-sans leading-relaxed mb-3">
+        <p className="text-sm text-noir-300 font-sans leading-relaxed mb-4">
           {suspect.public_bio}
         </p>
       </div>
 
-      <div className="pt-2 border-t border-noir-800 flex items-center justify-between">
-        <div className="text-[10px] font-typewriter text-noir-400 flex items-center gap-1">
-          <MessageSquare className="w-3 h-3 text-noir-500" />
-          <span>{messageCount} exchanges</span>
+      <div className="pt-3 border-t border-noir-800 flex items-center justify-between">
+        <div className="text-xs font-typewriter text-noir-400 flex items-center gap-1.5">
+          <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
+          <span>{messageCount} {messageCount === 1 ? "question" : "questions"}</span>
         </div>
 
         <button
@@ -70,9 +70,9 @@ export function SuspectCard({
             soundFX.playPaperRustle();
             onInterrogate(suspect.id);
           }}
-          className="px-3 py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-noir-950 font-typewriter font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition shadow-sm"
+          className="px-3.5 py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-noir-950 font-typewriter font-bold text-sm uppercase tracking-wider flex items-center gap-1.5 transition shadow-sm cursor-pointer"
         >
-          <UserCheck className="w-3.5 h-3.5" />
+          <UserCheck className="w-4 h-4" />
           <span>Interrogate</span>
         </button>
       </div>

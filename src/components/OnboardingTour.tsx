@@ -105,11 +105,21 @@ export function createDetectiveTour(): Driver {
       {
         element: '[data-tour="case-history"]',
         popover: {
-          title: "📁 Case Archive & Attempt Log",
+          title: "📁 Case History & Attempt Log",
           description:
-            "Every mystery you investigate, your attempt history, and score percentages are permanently logged here at the bottom of your desk. Re-attempt any case anytime without spoiling the killer unless you choose to reveal the solution!",
-          side: "top",
-          align: "center",
+            "Every mystery you investigate, your attempt history, and score percentages are archived in this tab. Re-attempt any case anytime without spoiling the killer!",
+          side: "bottom",
+          align: "start",
+        },
+      },
+      {
+        element: '[data-tour="settings-menu-btn"]',
+        popover: {
+          title: "⚙️ Precinct Settings & Utilities",
+          description:
+            "Open this menu anytime to toggle audio FX, configure your Groq API key, replay this walkthrough guide, or perform a full precinct app reset.",
+          side: "bottom",
+          align: "end",
         },
       },
     ],

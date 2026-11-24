@@ -44,8 +44,8 @@ export function ResetAppModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm pointer-events-auto">
-      <div className="bg-noir-900 border-2 border-rose-600/70 rounded-lg max-w-lg w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm pointer-events-auto">
+      <div className="bg-noir-900 border-2 border-rose-600/70 rounded-lg w-[94vw] max-w-lg shadow-2xl overflow-hidden max-h-[85dvh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="bg-rose-950/80 border-b border-rose-800/60 p-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -71,7 +71,7 @@ export function ResetAppModal({
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {step === 1 ? (
             <div className="space-y-3">
               <div className="flex items-start gap-3 p-3 rounded bg-rose-950/30 border border-rose-800/40 text-rose-200 text-xs font-sans leading-relaxed">

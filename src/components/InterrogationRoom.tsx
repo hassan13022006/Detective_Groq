@@ -95,9 +95,9 @@ export function InterrogationRoom({
   const selectedClue = clues.find((c) => c.id === selectedClueId);
 
   return (
-    <div className="bg-noir-900 border border-noir-750 rounded-lg shadow-dossier flex flex-col h-[650px] overflow-hidden">
+    <div className="bg-noir-900 border border-noir-750 rounded-lg shadow-dossier flex flex-col h-[58dvh] md:h-[62dvh] min-h-[500px] overflow-hidden">
       {/* Top Bar: Suspect Tabs */}
-      <div className="flex border-b border-noir-800 bg-noir-950/80 px-2 pt-2 gap-1 overflow-x-auto">
+      <div className="flex border-b border-noir-800 bg-noir-950/80 px-2 pt-2 gap-1 overflow-x-auto no-scrollbar">
         {suspects.map((suspect) => {
           const isActive = suspect.id === activeSuspect?.id;
           const stress = suspectNervousness[suspect.id] || 20;
@@ -134,20 +134,20 @@ export function InterrogationRoom({
 
       {/* Suspect Header & Stress / Pulse Monitor */}
       <div className="p-3 bg-noir-950/60 border-b border-noir-800 space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <div>
-            <div className="text-[10px] font-typewriter text-amber-500 uppercase tracking-widest">
+            <div className="text-[10px] font-typewriter text-amber-500 uppercase tracking-widest font-bold">
               Interrogation Chamber • Line 1
             </div>
-            <div className="text-sm font-bold text-noir-100 flex items-center gap-2">
+            <div className="text-sm sm:text-base font-bold text-noir-100 flex items-center gap-2">
               <span>{activeSuspect?.name}</span>
-              <span className="text-xs text-noir-400 font-normal">
+              <span className="text-xs text-amber-400/90 font-normal font-sans">
                 ({activeSuspect?.role})
               </span>
             </div>
           </div>
-          <div className="text-right text-[11px] font-typewriter text-noir-400">
-            Bio: <span className="text-noir-300 italic">{activeSuspect?.public_bio}</span>
+          <div className="text-left sm:text-right text-xs font-sans text-noir-400">
+            <span className="text-noir-300 italic">{activeSuspect?.public_bio}</span>
           </div>
         </div>
 
@@ -159,31 +159,33 @@ export function InterrogationRoom({
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-noir-950/40">
+      <div className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-4 bg-noir-950/40">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 text-noir-400 space-y-3 font-typewriter">
-            <div className="w-12 h-12 rounded-full bg-noir-850 border border-noir-750 flex items-center justify-center text-amber-500/60">
-              <FileQuestion className="w-6 h-6" />
+          <div className="h-full flex flex-col items-center justify-center text-center p-4 text-noir-400 space-y-3 font-typewriter">
+            <div className="w-10 h-10 rounded-full bg-noir-850 border border-noir-750 flex items-center justify-center text-amber-500/60">
+              <FileQuestion className="w-5 h-5" />
             </div>
-            <p className="text-xs max-w-sm leading-relaxed">
-              {activeSuspect?.name} sits under the harsh overhead lamp. Ask questions, confront them with crime scene clues, and observe their pulse and reactions.
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center pt-2">
+            <div className="text-xs sm:text-sm text-noir-300 font-sans">
+              <strong className="text-amber-400 font-typewriter">{activeSuspect?.name}</strong> ({activeSuspect?.role}) is seated across the table.
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center pt-1">
               <button
+                type="button"
                 onClick={() =>
-                  setInputText(`Where were you tonight around 11:00 PM when Julian was killed?`)
+                  setInputText(`Where were you tonight around 11:00 PM when the murder happened?`)
                 }
-                className="px-2.5 py-1 text-[11px] rounded bg-noir-850 hover:bg-noir-800 border border-noir-750 text-noir-300 hover:text-noir-100 transition"
+                className="px-3 py-1.5 text-xs rounded-full bg-noir-850 hover:bg-noir-800 border border-noir-750 text-noir-300 hover:text-amber-300 transition cursor-pointer"
               >
                 &quot;Where were you around 11:00 PM?&quot;
               </button>
               <button
+                type="button"
                 onClick={() =>
-                  setInputText(`What was your exact relationship with Julian Vance?`)
+                  setInputText(`What was your relationship with the victim?`)
                 }
-                className="px-2.5 py-1 text-[11px] rounded bg-noir-850 hover:bg-noir-800 border border-noir-750 text-noir-300 hover:text-noir-100 transition"
+                className="px-3 py-1.5 text-xs rounded-full bg-noir-850 hover:bg-noir-800 border border-noir-750 text-noir-300 hover:text-amber-300 transition cursor-pointer"
               >
-                &quot;What was your relationship with Julian?&quot;
+                &quot;What was your relationship with the victim?&quot;
               </button>
             </div>
           </div>
@@ -195,28 +197,28 @@ export function InterrogationRoom({
                 key={msg.id}
                 className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
               >
-                <div className="flex items-center gap-1.5 mb-1 px-1 text-[10px] font-typewriter text-noir-500">
-                  <span>{isUser ? "DETECTIVE" : activeSuspect?.name.toUpperCase()}</span>
+                <div className="flex items-center gap-1.5 mb-1 px-1 text-[11px] font-typewriter text-noir-400">
+                  <span className="font-bold">{isUser ? "DETECTIVE" : activeSuspect?.name.toUpperCase()}</span>
                   <span>•</span>
                   <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                   {!isUser && typeof msg.nervousness === "number" && (
-                    <span className="text-amber-500 font-bold ml-1">
+                    <span className="text-amber-400 font-bold ml-1 font-mono">
                       [Pulse: {msg.nervousness}%]
                     </span>
                   )}
                 </div>
 
                 <div
-                  className={`group relative max-w-[85%] rounded-lg p-3.5 text-xs font-sans leading-relaxed shadow-sm ${
+                  className={`group relative max-w-[85%] rounded-lg p-3 sm:p-3.5 text-sm font-sans leading-relaxed shadow-sm ${
                     isUser
-                      ? "bg-amber-600/90 text-noir-950 font-medium rounded-tr-none"
+                      ? "bg-amber-600 text-noir-950 font-medium rounded-tr-none"
                       : "bg-noir-850 border border-noir-750 text-noir-100 rounded-tl-none font-typewriter"
                   }`}
                 >
                   {/* Presented Clue Tag highlight */}
                   {msg.presentedClueName && (
-                    <div className="mb-2 p-1.5 rounded bg-amber-950/60 border border-amber-500/40 text-[10px] font-typewriter text-amber-300 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-amber-400" />
+                    <div className="mb-2 p-1.5 rounded bg-amber-950/60 border border-amber-500/40 text-xs font-typewriter text-amber-300 flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                       <span>CONFRONTED WITH: {msg.presentedClueName}</span>
                     </div>
                   )}
@@ -230,7 +232,7 @@ export function InterrogationRoom({
                         soundFX.playStamp();
                         onPinQuote(activeSuspect?.name || "Suspect", msg.content);
                       }}
-                      className="absolute -right-8 top-2 opacity-0 group-hover:opacity-100 transition p-1.5 rounded bg-noir-800 hover:bg-amber-500 hover:text-noir-950 text-noir-400 border border-noir-700 shadow"
+                      className="absolute -right-8 top-2 opacity-0 group-hover:opacity-100 transition p-1.5 rounded bg-noir-800 hover:bg-amber-500 hover:text-noir-950 text-noir-400 border border-noir-700 shadow cursor-pointer"
                       title="Pin this suspect statement to Detective Notebook"
                     >
                       <Pin className="w-3.5 h-3.5" />
@@ -244,10 +246,10 @@ export function InterrogationRoom({
 
         {isLoading && (
           <div className="flex flex-col items-start space-y-1">
-            <span className="text-[10px] font-typewriter text-noir-500 px-1">
+            <span className="text-[11px] font-typewriter text-noir-400 px-1 font-semibold">
               {activeSuspect?.name.toUpperCase()} IS REACTING...
             </span>
-            <div className="p-3 bg-noir-850 border border-noir-750 rounded-lg text-xs font-typewriter text-noir-400 flex items-center gap-2">
+            <div className="p-3 bg-noir-850 border border-noir-750 rounded-lg text-sm font-typewriter text-noir-300 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
               <span>Analyzing question &amp; calculating pulse reaction...</span>
             </div>
@@ -286,26 +288,28 @@ export function InterrogationRoom({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex items-end gap-2">
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
           {/* Present Clue Dropdown Menu */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => setShowClueDropdown(!showClueDropdown)}
               disabled={isLoading || actionPoints <= 0}
-              className={`px-3 py-2.5 rounded text-xs font-typewriter border flex items-center gap-1.5 transition ${
+              className={`h-11 px-2.5 sm:px-3 rounded text-xs font-typewriter border flex items-center justify-center gap-1 sm:gap-1.5 transition cursor-pointer ${
                 selectedClueId
-                  ? "bg-amber-500/20 text-amber-300 border-amber-500/50"
+                  ? "bg-amber-500/20 text-amber-300 border-amber-500/50 font-bold"
                   : "bg-noir-900 hover:bg-noir-850 text-noir-300 hover:text-noir-100 border-noir-750"
               }`}
-              title="Present a piece of evidence during your question"
+              title="Present physical evidence with your question"
             >
-              <span>Present Clue</span>
-              <ChevronDown className="w-3 h-3" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="hidden xs:inline">Present</span>
+              <span>Clue</span>
+              <ChevronDown className="w-3 h-3 text-noir-400" />
             </button>
 
             {showClueDropdown && (
-              <div className="absolute bottom-full mb-1 left-0 w-64 bg-noir-900 border border-noir-700 rounded-md shadow-2xl p-1 z-30 space-y-1">
+              <div className="absolute bottom-full mb-1 left-0 w-64 sm:w-72 bg-noir-900 border border-noir-700 rounded-md shadow-2xl p-1 z-30 space-y-1">
                 <div className="px-2 py-1 text-[10px] font-typewriter uppercase text-amber-500 font-bold border-b border-noir-800">
                   Physical Evidence to Present
                 </div>
@@ -317,14 +321,14 @@ export function InterrogationRoom({
                       setSelectedClueId(clue.id);
                       setShowClueDropdown(false);
                     }}
-                    className={`w-full text-left px-2 py-1.5 rounded text-xs font-typewriter hover:bg-noir-800 transition ${
+                    className={`w-full text-left px-2 py-1.5 rounded text-xs font-typewriter hover:bg-noir-800 transition cursor-pointer ${
                       selectedClueId === clue.id
                         ? "text-amber-400 font-bold bg-noir-850"
                         : "text-noir-200"
                     }`}
                   >
-                    <div className="font-semibold">{clue.name}</div>
-                    <div className="text-[10px] text-noir-400 line-clamp-1">
+                    <div className="font-semibold text-xs">{clue.name}</div>
+                    <div className="text-[11px] text-noir-400 line-clamp-1">
                       {clue.description}
                     </div>
                   </button>
@@ -333,33 +337,30 @@ export function InterrogationRoom({
             )}
           </div>
 
-          {/* Text input area */}
+          {/* Single-Line Text Input matching h-11 */}
           <div className="flex-1 relative">
-            <textarea
-              rows={2}
+            <input
+              type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleKeyDown}
               disabled={isLoading || actionPoints <= 0}
               placeholder={
                 actionPoints <= 0
                   ? "Action points depleted..."
                   : `Question ${activeSuspect?.name} (Costs 1 AP)...`
               }
-              className="w-full resize-none px-3 py-2 bg-noir-900 border border-noir-750 rounded text-xs text-noir-100 placeholder-noir-500 focus:outline-none focus:border-amber-500 font-typewriter"
+              className="w-full h-11 px-3 sm:px-4 bg-noir-900 border border-noir-750 rounded text-sm text-noir-100 placeholder-noir-500 focus:outline-none focus:border-amber-500 font-sans"
             />
           </div>
 
-          {/* Send Button */}
+          {/* Send Button matching h-11 */}
           <button
             type="submit"
             disabled={!inputText.trim() || isLoading || actionPoints <= 0}
-            className="h-14 px-4 bg-amber-600 hover:bg-amber-500 disabled:bg-noir-800 text-noir-950 disabled:text-noir-500 font-typewriter font-bold text-xs uppercase tracking-wider rounded flex flex-col items-center justify-center gap-0.5 transition shadow-sm disabled:cursor-not-allowed"
+            className="h-11 px-3 sm:px-4 bg-amber-600 hover:bg-amber-500 disabled:bg-noir-800 text-noir-950 disabled:text-noir-500 font-typewriter font-bold text-xs uppercase tracking-wider rounded flex items-center justify-center gap-1.5 transition shadow-sm disabled:cursor-not-allowed shrink-0 cursor-pointer"
           >
             <Send className="w-4 h-4" />
-            <span className="text-[9px] flex items-center gap-0.5">
-              1 AP <Zap className="w-2.5 h-2.5 inline" />
-            </span>
+            <span className="hidden xs:inline">1 AP</span>
           </button>
         </form>
       </div>

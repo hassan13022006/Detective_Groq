@@ -27,46 +27,43 @@ export function ClueCard({
   const hasForensics = Boolean(forensicsResult);
 
   return (
-    <div className="relative bg-noir-900 border border-noir-800 hover:border-noir-700 rounded-lg p-4 transition-all duration-200 flex flex-col justify-between shadow-sm">
+    <div className="relative bg-noir-900 border border-noir-800 hover:border-noir-700 rounded-lg p-4 sm:p-5 transition-all duration-200 flex flex-col justify-between shadow-sm">
       {/* Evidence Tag Header */}
       <div>
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-noir-800/80">
+        <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-noir-800/80">
           <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-typewriter font-bold bg-noir-800 text-amber-400 border border-amber-500/30">
+            <span className="px-2 py-0.5 rounded text-[11px] font-typewriter font-bold bg-noir-800 text-cyan-400 border border-cyan-500/30">
               CLUE #{index + 1}
-            </span>
-            <span className="text-[10px] font-typewriter text-noir-500">
-              EVID-TAG-{clue.id.toUpperCase()}
             </span>
           </div>
           {hasForensics && (
-            <span className="flex items-center gap-1 text-[10px] font-typewriter text-emerald-400 font-semibold">
-              <CheckCircle2 className="w-3 h-3" />
+            <span className="flex items-center gap-1 text-xs font-typewriter text-emerald-400 font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5" />
               SCANNED
             </span>
           )}
         </div>
 
-        <h3 className="text-base font-bold text-noir-100 font-sans mb-1.5 tracking-tight">
+        <h3 className="text-base sm:text-lg font-bold text-noir-100 font-sans mb-1.5 tracking-tight">
           {clue.name}
         </h3>
 
-        <p className="text-xs text-noir-300 font-sans leading-relaxed mb-3">
+        <p className="text-sm text-noir-300 font-sans leading-relaxed mb-3">
           {clue.description}
         </p>
 
         {/* If Forensics scan results already present, display a quick summary */}
         {hasForensics && forensicsResult && (
-          <div className="mt-2 mb-3 p-2.5 bg-noir-950 rounded border border-emerald-500/20 text-xs font-typewriter space-y-1.5">
-            <div className="flex items-center justify-between text-[11px]">
+          <div className="mt-2 mb-3 p-3 bg-noir-950 rounded border border-emerald-500/20 text-xs font-typewriter space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
               <span className="text-emerald-400 font-bold uppercase">
                 Relevance: {forensicsResult.relevance_score}%
               </span>
-              <span className="text-noir-400 text-[10px]">
+              <span className="text-noir-400 text-xs font-sans">
                 {forensicsResult.possible_owners.join(", ")}
               </span>
             </div>
-            <p className="text-noir-300 text-[11px] font-sans line-clamp-3">
+            <p className="text-noir-300 text-xs font-sans line-clamp-3">
               {forensicsResult.analysis}
             </p>
           </div>
@@ -74,14 +71,14 @@ export function ClueCard({
       </div>
 
       {/* Action Buttons */}
-      <div className="pt-2 border-t border-noir-800/60 flex items-center justify-between gap-2 mt-2">
+      <div className="pt-3 border-t border-noir-800/60 flex items-center justify-between gap-2 mt-2">
         <button
           onClick={() => {
             soundFX.playForensicsScan();
             onAskForensics(clue.id);
           }}
           disabled={isScanning || (!hasForensics && actionPoints < 2)}
-          className={`px-3 py-1.5 rounded text-xs font-typewriter font-semibold flex items-center gap-1.5 transition ${
+          className={`px-3.5 py-2 rounded text-sm font-typewriter font-semibold flex items-center gap-1.5 transition cursor-pointer ${
             hasForensics
               ? "bg-noir-800 hover:bg-noir-750 text-emerald-400 border border-emerald-500/30"
               : actionPoints < 2
@@ -96,7 +93,7 @@ export function ClueCard({
               : "Analyze physical clue with AI Forensics (costs 2 AP)"
           }
         >
-          <Search className={`w-3.5 h-3.5 ${isScanning ? "animate-spin" : ""}`} />
+          <Search className={`w-4 h-4 ${isScanning ? "animate-spin" : ""}`} />
           <span>
             {isScanning
               ? "Analyzing..."
@@ -109,9 +106,9 @@ export function ClueCard({
         {onSelectForInterrogation && (
           <button
             onClick={() => onSelectForInterrogation(clue.id)}
-            className="text-[11px] font-typewriter text-amber-400/90 hover:text-amber-300 hover:underline transition"
+            className="text-xs sm:text-sm font-typewriter text-amber-400 hover:text-amber-300 hover:underline transition cursor-pointer"
           >
-            Present in Room &rarr;
+            Present &rarr;
           </button>
         )}
       </div>

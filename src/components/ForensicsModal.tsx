@@ -23,8 +23,8 @@ export function ForensicsModal({
   if (!isOpen || !clue) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg bg-noir-900 border border-cyan-500/40 rounded-lg shadow-2xl p-6 text-noir-100 font-typewriter">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm pointer-events-auto">
+      <div className="relative w-[94vw] max-w-lg bg-noir-900 border border-cyan-500/40 rounded-lg shadow-2xl p-4 sm:p-6 text-noir-100 font-typewriter max-h-[85dvh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-noir-400 hover:text-noir-100 transition"

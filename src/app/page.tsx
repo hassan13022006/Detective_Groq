@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Search,
   Key,
+  Archive,
 } from "lucide-react";
 import {
   PublicCaseData,
@@ -34,6 +35,7 @@ import { VerdictModal } from "@/components/VerdictModal";
 import { ApiKeyModal } from "@/components/ApiKeyModal";
 import { ResetAppModal } from "@/components/ResetAppModal";
 import { CaseHistorySection } from "@/components/CaseHistorySection";
+import { InfoButton } from "@/components/InfoButton";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { soundFX } from "@/lib/soundEffects";
 
@@ -45,8 +47,8 @@ export default function Home() {
   const [caseLoading, setCaseLoading] = useState(true);
   const [caseError, setCaseError] = useState<string | null>(null);
 
-  // Active Tab: "dossier" | "interrogation"
-  const [activeMainTab, setActiveMainTab] = useState<"dossier" | "interrogation">("dossier");
+  // Active Tab: "dossier" | "interrogation" | "history"
+  const [activeMainTab, setActiveMainTab] = useState<"dossier" | "interrogation" | "history">("dossier");
 
   // Detective Action Points
   const [actionPoints, setActionPoints] = useState<number>(INITIAL_ACTION_POINTS);
@@ -631,16 +633,16 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10 pointer-events-auto">
-        {/* Navigation Tabs (Case Dossier vs Interrogation Room) */}
+        {/* Navigation Tabs (Case Dossier vs Interrogation Room vs Case History) */}
         <div className="flex items-center justify-between border-b border-noir-800 pb-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full no-scrollbar">
             <button
               data-tour="case-dossier"
               onClick={() => {
                 soundFX.playPaperRustle();
                 setActiveMainTab("dossier");
               }}
-              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition cursor-pointer pointer-events-auto ${
+              className={`px-3 sm:px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-1.5 sm:gap-2 transition shrink-0 cursor-pointer pointer-events-auto ${
                 activeMainTab === "dossier"
                   ? "bg-noir-850 text-amber-400 border border-noir-700 shadow-md"
                   : "text-noir-400 hover:text-noir-200 hover:bg-noir-900"
@@ -657,20 +659,37 @@ export default function Home() {
                 setActiveMainTab("interrogation");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition cursor-pointer pointer-events-auto ${
+              className={`px-3 sm:px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-1.5 sm:gap-2 transition shrink-0 cursor-pointer pointer-events-auto ${
                 activeMainTab === "interrogation"
                   ? "bg-noir-850 text-amber-400 border border-noir-700 shadow-md"
                   : "text-noir-400 hover:text-noir-200 hover:bg-noir-900"
               }`}
             >
               <MessageSquare className="w-4 h-4 text-rose-500" />
-              <span>INTERROGATION CHAMBER</span>
+              <span>INTERROGATION</span>
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             </button>
-          </div>
 
-          <div className="text-[11px] font-typewriter text-noir-400 hidden sm:block">
-            {caseData?.case_title}
+            <button
+              data-tour="case-history"
+              onClick={() => {
+                soundFX.playPaperRustle();
+                setActiveMainTab("history");
+              }}
+              className={`px-3 sm:px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-1.5 sm:gap-2 transition shrink-0 cursor-pointer pointer-events-auto ${
+                activeMainTab === "history"
+                  ? "bg-noir-850 text-amber-400 border border-noir-700 shadow-md"
+                  : "text-noir-400 hover:text-noir-200 hover:bg-noir-900"
+              }`}
+            >
+              <Archive className="w-4 h-4 text-cyan-500" />
+              <span>CASE HISTORY</span>
+              {caseHistory.length > 0 && (
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-noir-800 text-noir-300 font-mono">
+                  {caseHistory.length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
@@ -709,16 +728,12 @@ export default function Home() {
 
             {/* 2. Physical Evidence & Clues Section */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileSearch className="w-4 h-4 text-cyan-400" />
-                  <h3 className="text-xs font-typewriter uppercase tracking-wider font-bold text-cyan-400">
-                    Physical Evidence &amp; Crime Scene Artifacts (3 Items)
-                  </h3>
-                </div>
-                <span className="text-[10px] font-typewriter text-noir-400">
-                  Forensic Scan costs 2 Action Points
-                </span>
+              <div className="flex items-center gap-2">
+                <FileSearch className="w-4 h-4 text-cyan-400" />
+                <h3 className="text-xs sm:text-sm font-typewriter uppercase tracking-wider font-bold text-cyan-400">
+                  PHYSICAL EVIDENCE
+                </h3>
+                <InfoButton text="Run a Forensic Scan (2 AP) for AI lab analysis, or present clues directly during interrogation." />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -744,16 +759,12 @@ export default function Home() {
 
             {/* 3. Persons of Interest / Suspect Lineup */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-xs font-typewriter uppercase tracking-wider font-bold text-amber-400">
-                    Suspect Lineup &amp; Persons of Interest (3 Suspects)
-                  </h3>
-                </div>
-                <span className="text-[10px] font-typewriter text-noir-400">
-                  Select a suspect to bring them into the Interrogation Room
-                </span>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-amber-400" />
+                <h3 className="text-xs sm:text-sm font-typewriter uppercase tracking-wider font-bold text-amber-400">
+                  SUSPECT LINEUP
+                </h3>
+                <InfoButton text="Tap any suspect card to bring them into the Interrogation Chamber." />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -795,13 +806,18 @@ export default function Home() {
           />
         )}
 
-        {/* Case Archive & Attempt Log (Bottom of Main Page) */}
-        <CaseHistorySection
-          caseHistory={caseHistory}
-          activeCaseId={caseData?.case_id || ""}
-          onReattemptCase={handleReattemptCase}
-          onDeleteCase={handleDeleteCase}
-        />
+        {/* Tab 3: Case Archive & Attempt Log */}
+        {activeMainTab === "history" && (
+          <CaseHistorySection
+            caseHistory={caseHistory}
+            activeCaseId={caseData?.case_id || ""}
+            onReattemptCase={(id) => {
+              handleReattemptCase(id);
+              setActiveMainTab("dossier");
+            }}
+            onDeleteCase={handleDeleteCase}
+          />
+        )}
       </main>
 
       {/* Persistent Detective's Notebook Drawer */}
