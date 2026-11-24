@@ -5,11 +5,15 @@ import {
   Scale,
   X,
   AlertTriangle,
-  Award,
-  RefreshCw,
+  RotateCcw,
   Sparkles,
   CheckCircle2,
   XCircle,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+  FileText,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { PublicSuspect, VerdictResult } from "@/types/mystery";
@@ -19,8 +23,14 @@ interface VerdictModalProps {
   isOpen: boolean;
   onClose: () => void;
   suspects: PublicSuspect[];
-  onSubmitVerdict: (accusedId: string, theory: string, motive: string, method: string) => Promise<VerdictResult | null>;
+  onSubmitVerdict: (
+    accusedId: string,
+    theory: string,
+    motive: string,
+    method: string
+  ) => Promise<VerdictResult | null>;
   onNewMystery: () => void;
+  onReattemptCase: () => void;
 }
 
 export function VerdictModal({
@@ -29,6 +39,7 @@ export function VerdictModal({
   suspects,
   onSubmitVerdict,
   onNewMystery,
+  onReattemptCase,
 }: VerdictModalProps) {
   const [selectedSuspectId, setSelectedSuspectId] = useState<string>(suspects[0]?.id || "");
   const [theory, setTheory] = useState("");
@@ -36,6 +47,7 @@ export function VerdictModal({
   const [method, setMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [verdictResult, setVerdictResult] = useState<VerdictResult | null>(null);
+  const [showTrueSolution, setShowTrueSolution] = useState(false);
 
   if (!isOpen) return null;
 
@@ -45,6 +57,7 @@ export function VerdictModal({
 
     soundFX.playStamp();
     setIsSubmitting(true);
+    setShowTrueSolution(false);
 
     try {
       const result = await onSubmitVerdict(
@@ -59,7 +72,7 @@ export function VerdictModal({
         soundFX.playStamp();
 
         if (result.is_correct) {
-          // Trigger victory confetti!
+          // Trigger victory confetti
           confetti({
             particleCount: 120,
             spread: 80,
@@ -74,14 +87,22 @@ export function VerdictModal({
 
   const handleReset = () => {
     setVerdictResult(null);
+    setShowTrueSolution(false);
+  };
+
+  const handleReattempt = () => {
+    soundFX.playPaperRustle();
+    setVerdictResult(null);
+    setShowTrueSolution(false);
+    onReattemptCase();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md pointer-events-auto">
       <div className="relative w-full max-w-2xl bg-noir-900 border border-noir-700 rounded-lg shadow-2xl p-6 text-noir-100 font-typewriter max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-noir-400 hover:text-noir-100 transition"
+          className="absolute top-4 right-4 text-noir-400 hover:text-noir-100 transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -121,30 +142,31 @@ export function VerdictModal({
             <div className="p-4 bg-noir-950 rounded-lg border border-noir-800 max-w-lg mx-auto text-left space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-noir-850">
                 <span className="text-xs uppercase text-noir-400 font-bold">
-                  Chief Henderson&apos;s Score:
+                  Chief Henderson&apos;s Assessment:
                 </span>
                 <span
                   className={`text-xl font-black ${
                     verdictResult.is_correct ? "text-emerald-400" : "text-rose-400"
                   }`}
                 >
-                  {verdictResult.score} / 100
+                  Score: {verdictResult.score}%
                 </span>
               </div>
 
               {verdictResult.breakdown && (
-                <div className="grid grid-cols-2 gap-2 text-[11px] text-noir-300">
-                  <div className="flex items-center gap-1.5">
-                    {verdictResult.breakdown.culprit_identified ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-3.5 h-3.5 text-rose-400" />
-                    )}
-                    <span>Culprit: {verdictResult.breakdown.culprit_identified ? "Identified" : "Wrong Suspect"}</span>
+                <div className="grid grid-cols-3 gap-2 text-[11px] text-noir-300 py-1 border-b border-noir-850">
+                  <div>
+                    <span className="text-noir-500 block text-[9px] uppercase">Motive</span>
+                    <span className="font-bold text-amber-400">{verdictResult.breakdown.motive_accuracy}%</span>
                   </div>
-                  <div>Motive Score: {verdictResult.breakdown.motive_accuracy}%</div>
-                  <div>Method Score: {verdictResult.breakdown.method_accuracy}%</div>
-                  <div>Timeline: {verdictResult.breakdown.timeline_accuracy}%</div>
+                  <div>
+                    <span className="text-noir-500 block text-[9px] uppercase">Method</span>
+                    <span className="font-bold text-amber-400">{verdictResult.breakdown.method_accuracy}%</span>
+                  </div>
+                  <div>
+                    <span className="text-noir-500 block text-[9px] uppercase">Timeline</span>
+                    <span className="font-bold text-amber-400">{verdictResult.breakdown.timeline_accuracy}%</span>
+                  </div>
                 </div>
               )}
 
@@ -156,23 +178,103 @@ export function VerdictModal({
                   &quot;{verdictResult.feedback}&quot;
                 </p>
               </div>
+
+              {/* Reveal True Solution Spoiler-Free Toggle */}
+              {verdictResult.true_solution && (
+                <div className="pt-3 border-t border-noir-850 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setShowTrueSolution(!showTrueSolution)}
+                      className="px-3 py-1.5 rounded bg-noir-900 hover:bg-noir-850 border border-noir-750 text-xs text-noir-300 hover:text-amber-300 flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      {showTrueSolution ? (
+                        <>
+                          <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Hide True Solution</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Reveal True Solution (Spoiler Warning)</span>
+                        </>
+                      )}
+                    </button>
+                    {!showTrueSolution && (
+                      <span className="text-[10px] text-noir-500 italic">
+                        Hidden by default so you can re-attempt!
+                      </span>
+                    )}
+                  </div>
+
+                  {showTrueSolution && (
+                    <div className="p-3 bg-noir-900/90 rounded border border-amber-600/40 text-xs space-y-2 text-left font-sans animate-in fade-in duration-300">
+                      <div className="flex items-center gap-1.5 text-amber-500 font-typewriter font-bold text-[11px] uppercase pb-1 border-b border-noir-800">
+                        <Unlock className="w-3.5 h-3.5" />
+                        <span>Confidential Case Solution Archive</span>
+                      </div>
+                      <div>
+                        <strong className="text-amber-400 font-typewriter text-[11px] uppercase block">
+                          True Killer:
+                        </strong>
+                        <span className="text-noir-100 font-semibold">
+                          {verdictResult.true_solution.killer_name}
+                        </span>
+                      </div>
+                      <div>
+                        <strong className="text-amber-400 font-typewriter text-[11px] uppercase block">
+                          True Motive:
+                        </strong>
+                        <p className="text-noir-200 text-xs">
+                          {verdictResult.true_solution.motive}
+                        </p>
+                      </div>
+                      <div>
+                        <strong className="text-amber-400 font-typewriter text-[11px] uppercase block">
+                          Murder Method &amp; Weapon:
+                        </strong>
+                        <p className="text-noir-200 text-xs">
+                          {verdictResult.true_solution.method}
+                        </p>
+                      </div>
+                      <div className="pt-1 border-t border-noir-800 text-[11px] text-noir-300 italic">
+                        {verdictResult.true_solution.full_truth}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Action buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              {/* Re-attempt Case button */}
               <button
-                onClick={handleReset}
-                className="px-4 py-2 rounded bg-noir-800 hover:bg-noir-750 text-noir-200 text-xs uppercase transition font-bold"
+                type="button"
+                onClick={handleReattempt}
+                className="px-4 py-2 rounded bg-amber-600 hover:bg-amber-500 text-noir-950 text-xs uppercase transition font-bold flex items-center gap-1.5 shadow-md shadow-amber-950/40 cursor-pointer"
+                title="Reset Action Points to 12 and start a fresh investigation of this case"
               >
-                Re-evaluate Evidence &amp; Try Again
+                <RotateCcw className="w-4 h-4" />
+                <span>Re-attempt Case (Fresh 12 AP)</span>
               </button>
+
               <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-2 rounded bg-noir-800 hover:bg-noir-750 text-noir-200 text-xs uppercase transition font-bold cursor-pointer"
+              >
+                Edit Accusation Theory
+              </button>
+
+              <button
+                type="button"
                 onClick={() => {
                   soundFX.playTypewriter();
                   onClose();
                   onNewMystery();
                 }}
-                className="px-5 py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-noir-950 text-xs font-bold uppercase transition flex items-center gap-1.5 shadow-lg shadow-cyan-900/30"
+                className="px-4 py-2 rounded bg-cyan-700 hover:bg-cyan-600 text-noir-100 text-xs font-bold uppercase transition flex items-center gap-1.5 shadow-lg shadow-cyan-900/30 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Next Murder Mystery Case</span>
@@ -198,7 +300,7 @@ export function VerdictModal({
                       key={suspect.id}
                       type="button"
                       onClick={() => setSelectedSuspectId(suspect.id)}
-                      className={`p-3 rounded border text-left transition flex flex-col justify-between ${
+                      className={`p-3 rounded border text-left transition flex flex-col justify-between cursor-pointer ${
                         isSelected
                           ? "bg-red-950/50 border-red-500 text-red-200 ring-1 ring-red-500/60"
                           : "bg-noir-950 border-noir-800 text-noir-400 hover:border-noir-700 hover:text-noir-200"
@@ -269,14 +371,14 @@ export function VerdictModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs uppercase text-noir-400 hover:text-noir-200 transition"
+                className="px-4 py-2 text-xs uppercase text-noir-400 hover:text-noir-200 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!selectedSuspectId || !theory.trim() || isSubmitting}
-                className="px-6 py-2.5 bg-red-700 hover:bg-red-600 disabled:bg-noir-800 disabled:text-noir-600 text-white font-bold text-xs uppercase tracking-wider rounded flex items-center gap-2 transition shadow-lg shadow-red-950/60"
+                className="px-6 py-2.5 bg-red-700 hover:bg-red-600 disabled:bg-noir-800 disabled:text-noir-600 text-white font-bold text-xs uppercase tracking-wider rounded flex items-center gap-2 transition shadow-lg shadow-red-950/60 cursor-pointer"
               >
                 <Scale className="w-4 h-4" />
                 <span>

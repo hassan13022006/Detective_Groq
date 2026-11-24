@@ -44,12 +44,13 @@ PERSONS OF INTEREST:
 ${suspectsList}
 
 Analyze this physical clue with scientific rigor (spectrometry, digital forensics, chemical residue, timeline correlation).
+Keep all analysis, followup questions, and JSON string values concise (1 to 2 crisp clinical sentences each) so output generates quickly and reliably.
 Respond strictly in JSON format matching this schema:
 {
   "relevance_score": <number between 1 and 100 representing evidentiary weight>,
   "possible_owners": [<array of 1 to 3 suspect names most strongly associated or implicated by this item>],
-  "analysis": "<2 to 4 sentences of clinical forensic findings, chemical/physical markers, or digital timestamps>",
-  "followup_question": "<a precise, hard-hitting interrogation question the detective should confront the suspects with>"
+  "analysis": "<1 to 2 concise sentences of clinical forensic findings, chemical/physical markers, or digital timestamps>",
+  "followup_question": "<a single precise, hard-hitting interrogation question the detective should confront the suspects with>"
 }`;
 
     const completion = await groq.chat.completions.create({
@@ -60,8 +61,9 @@ Respond strictly in JSON format matching this schema:
       ],
       response_format: { type: "json_object" },
       temperature: 0.3,
-      max_tokens: 800,
-    });
+      max_completion_tokens: 2048,
+      reasoning_effort: "low",
+    } as any);
 
     const rawContent = completion.choices[0]?.message?.content || "{}";
     let parsed: {

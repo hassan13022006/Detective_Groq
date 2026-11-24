@@ -6,9 +6,14 @@ import { Zap, AlertTriangle } from "lucide-react";
 interface ActionPointsBadgeProps {
   points: number;
   maxPoints?: number;
+  dataTour?: string;
 }
 
-export function ActionPointsBadge({ points, maxPoints = 12 }: ActionPointsBadgeProps) {
+export function ActionPointsBadge({
+  points,
+  maxPoints = 12,
+  dataTour,
+}: ActionPointsBadgeProps) {
   const percentage = Math.max(0, Math.min(100, (points / maxPoints) * 100));
 
   let colorClasses = "text-amber-400 border-amber-500/40 bg-amber-950/30";
@@ -27,8 +32,8 @@ export function ActionPointsBadge({ points, maxPoints = 12 }: ActionPointsBadgeP
 
   return (
     <div
-      data-tour="action-points"
-      className={`flex items-center gap-3 px-3.5 py-1.5 rounded border ${colorClasses} backdrop-blur-md shadow-sm transition-all`}
+      data-tour={dataTour}
+      className={`flex items-center gap-3 px-3.5 py-1.5 rounded border ${colorClasses} backdrop-blur-md shadow-sm transition-all pointer-events-auto`}
       title="Action Points (AP): 1 AP per chat inquiry, 2 AP per forensic scan. Manage your investigation budget carefully!"
     >
       <div className="flex items-center gap-1.5">

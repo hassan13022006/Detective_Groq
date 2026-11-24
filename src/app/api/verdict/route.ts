@@ -51,13 +51,15 @@ EVALUATION CRITERIA:
 2. Evaluate their deduction with gritty police chief feedback:
    - If correct: Praise their sharp deductive skills, cite the key clues that sealed the case, and rubber-stamp the conviction for the District Attorney.
    - If incorrect: Berate their sloppy police work, warn that the defense lawyer will rip them to shreds in court, and order the case dismissed.
+   - SPOILER GUARDRAIL: If the detective accused the wrong person or their theory failed, DO NOT spoil or mention the name of the true killer, the actual murder weapon, or the secret motive in your feedback! Keep your critique focused strictly on the flaws in their accusation against ${accused.name}.
+3. Keep the feedback concise (2 to 3 punchy sentences) and all JSON string values brief.
 
 OUTPUT FORMAT:
 Return valid JSON ONLY matching this schema:
 {
   "is_correct": boolean,
   "score": number, // integer between 0 and 100
-  "feedback": "Your 3-4 sentence gritty chief evaluation addressing the detective directly.",
+  "feedback": "Your 2-3 sentence gritty chief evaluation addressing the detective directly without spoiling the true killer if incorrect.",
   "breakdown": {
     "culprit_identified": boolean,
     "motive_accuracy": number, // 0 - 100
@@ -77,8 +79,9 @@ Return valid JSON ONLY matching this schema:
       ],
       response_format: { type: "json_object" },
       temperature: 0.3,
-      max_tokens: 1024,
-    });
+      max_completion_tokens: 2048,
+      reasoning_effort: "low",
+    } as any);
 
     const rawContent = completion.choices[0]?.message?.content || "{}";
     let parsed: {
@@ -101,7 +104,7 @@ Return valid JSON ONLY matching this schema:
         score: isKiller ? 85 : 30,
         feedback: isKiller
           ? `Solid work, Detective. ${accused.name} is in handcuffs and the D.A. has an open-and-shut case.`
-          : `You've got the wrong suspect, Detective. The real killer is laughing in the shadows while the city burns. CASE DISMISSED!`,
+          : `You've got the wrong suspect, Detective. Your evidence against ${accused.name} will never stand up before a grand jury. CASE DISMISSED!`,
       };
     }
 
@@ -114,7 +117,15 @@ Return valid JSON ONLY matching this schema:
       parsed.score = Math.max(65, Math.min(100, parsed.score));
     }
 
-    return NextResponse.json(parsed);
+    return NextResponse.json({
+      ...parsed,
+      true_solution: {
+        killer_name: serverCase.solution.killer_name,
+        motive: serverCase.solution.motive,
+        method: serverCase.solution.method,
+        full_truth: serverCase.solution.full_truth,
+      },
+    });
   } catch (error: any) {
     console.error("Verdict error:", error);
     return NextResponse.json(

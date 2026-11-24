@@ -11,6 +11,7 @@ import {
   Key,
   FolderLock,
   HelpCircle,
+  RotateCcw,
 } from "lucide-react";
 import { ActionPointsBadge } from "./ActionPointsBadge";
 import { soundFX } from "@/lib/soundEffects";
@@ -26,6 +27,7 @@ interface HeaderProps {
   notebookNotesCount: number;
   isGeneratingCase: boolean;
   hasCustomKey: boolean;
+  onOpenResetApp?: () => void;
 }
 
 export function Header({
@@ -39,6 +41,7 @@ export function Header({
   notebookNotesCount,
   isGeneratingCase,
   hasCustomKey,
+  onOpenResetApp,
 }: HeaderProps) {
   const [muted, setMuted] = useState(false);
 
@@ -48,7 +51,7 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-noir-950/95 border-b border-noir-800 backdrop-blur-md px-4 py-3 shadow-md">
+    <header className="sticky top-0 z-40 bg-noir-950/95 border-b border-noir-800 backdrop-blur-md px-4 py-3 shadow-md pointer-events-auto">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
         {/* Title & Police Precinct Branding */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
@@ -82,13 +85,13 @@ export function Header({
         {/* Action Points & Control Center */}
         <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto justify-end flex-wrap">
           <div className="hidden md:block">
-            <ActionPointsBadge points={actionPoints} />
+            <ActionPointsBadge points={actionPoints} dataTour="action-points" />
           </div>
 
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className="p-2 rounded bg-noir-900 border border-noir-750 text-noir-300 hover:text-noir-100 hover:border-noir-600 transition"
+            className="p-2 rounded bg-noir-900 border border-noir-750 text-noir-300 hover:text-noir-100 hover:border-noir-600 transition cursor-pointer"
             title={muted ? "Unmute noir audio FX" : "Mute audio FX"}
           >
             {muted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-noir-300" />}
@@ -97,7 +100,7 @@ export function Header({
           {/* API Key settings */}
           <button
             onClick={onOpenApiKeyModal}
-            className={`px-2.5 py-1.5 rounded text-xs font-typewriter flex items-center gap-1.5 border transition ${
+            className={`px-2.5 py-1.5 rounded text-xs font-typewriter flex items-center gap-1.5 border transition cursor-pointer ${
               hasCustomKey
                 ? "bg-amber-950/40 border-amber-500/40 text-amber-300"
                 : "bg-noir-900 border-noir-750 text-noir-400 hover:text-noir-200"
@@ -115,7 +118,7 @@ export function Header({
               soundFX.playPaperRustle();
               onOpenNotebook();
             }}
-            className="px-3 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-noir-600 text-xs font-typewriter flex items-center gap-2 text-noir-200 transition shadow-sm relative"
+            className="px-3 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-noir-600 text-xs font-typewriter flex items-center gap-2 text-noir-200 transition shadow-sm relative cursor-pointer"
           >
             <BookOpen className="w-4 h-4 text-amber-400" />
             <span>Notebook</span>
@@ -132,7 +135,7 @@ export function Header({
               soundFX.playPaperRustle();
               onStartTour();
             }}
-            className="px-2.5 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-amber-500/50 text-xs font-typewriter flex items-center gap-1.5 text-amber-300 hover:text-amber-200 transition shadow-sm"
+            className="px-2.5 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-amber-500/50 text-xs font-typewriter flex items-center gap-1.5 text-amber-300 hover:text-amber-200 transition shadow-sm cursor-pointer"
             title="Replay Interactive Detective Walkthrough"
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
@@ -147,7 +150,7 @@ export function Header({
               onGenerateNewCase();
             }}
             disabled={isGeneratingCase}
-            className="px-3 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-cyan-500/50 text-xs font-typewriter flex items-center gap-1.5 text-cyan-300 hover:text-cyan-200 transition disabled:opacity-50"
+            className="px-3 py-1.5 rounded bg-noir-850 hover:bg-noir-800 border border-noir-700 hover:border-cyan-500/50 text-xs font-typewriter flex items-center gap-1.5 text-cyan-300 hover:text-cyan-200 transition disabled:opacity-50 cursor-pointer"
             title="Generate a brand-new solvable murder mystery using gpt-oss-120b"
           >
             <Sparkles className={`w-3.5 h-3.5 ${isGeneratingCase ? "animate-spin text-cyan-400" : ""}`} />
@@ -156,6 +159,21 @@ export function Header({
             </span>
           </button>
 
+          {/* Reset App Trigger */}
+          {onOpenResetApp && (
+            <button
+              onClick={() => {
+                soundFX.playPaperRustle();
+                onOpenResetApp();
+              }}
+              className="p-1.5 sm:px-2 sm:py-1.5 rounded bg-noir-900 hover:bg-rose-950/60 border border-noir-750 hover:border-rose-800/60 text-xs font-typewriter flex items-center gap-1 text-noir-400 hover:text-rose-400 transition cursor-pointer"
+              title="Reset entire app state, archives, and notebook"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Reset</span>
+            </button>
+          )}
+
           {/* Accuse Suspect Final Verdict Trigger */}
           <button
             data-tour="accuse-btn"
@@ -163,7 +181,7 @@ export function Header({
               soundFX.playStamp();
               onOpenVerdict();
             }}
-            className="px-3.5 py-1.5 rounded bg-red-700 hover:bg-red-600 text-white font-typewriter font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-red-950/50 hover:shadow-red-900/80 border border-red-500"
+            className="px-3.5 py-1.5 rounded bg-red-700 hover:bg-red-600 text-white font-typewriter font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-red-950/50 hover:shadow-red-900/80 border border-red-500 cursor-pointer"
           >
             <Scale className="w-4 h-4" />
             <span>Accuse Suspect</span>

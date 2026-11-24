@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { driver, Driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -10,6 +10,11 @@ export function createDetectiveTour(): Driver {
   const driverObj: Driver = driver({
     showProgress: true,
     animate: true,
+    allowClose: true,
+    overlayClickBehavior: "close",
+    showButtons: ["next", "previous", "close"],
+    stagePadding: 6,
+    stageRadius: 6,
     popoverClass: "detective-tour-popover",
     nextBtnText: "Next →",
     prevBtnText: "← Back",
@@ -18,6 +23,15 @@ export function createDetectiveTour(): Driver {
     onDestroyed: () => {
       if (typeof window !== "undefined") {
         localStorage.setItem(TOUR_STORAGE_KEY, "true");
+        document.body.classList.remove(
+          "driver-active",
+          "driver-fade",
+          "driver-simple",
+          "driver-no-scroll"
+        );
+        document
+          .querySelectorAll(".driver-overlay, .driver-popover")
+          .forEach((el) => el.remove());
       }
     },
     steps: [
@@ -88,6 +102,16 @@ export function createDetectiveTour(): Driver {
           align: "end",
         },
       },
+      {
+        element: '[data-tour="case-history"]',
+        popover: {
+          title: "📁 Case Archive & Attempt Log",
+          description:
+            "Every mystery you investigate, your attempt history, and score percentages are permanently logged here at the bottom of your desk. Re-attempt any case anytime without spoiling the killer unless you choose to reveal the solution!",
+          side: "top",
+          align: "center",
+        },
+      },
     ],
   });
 
@@ -99,8 +123,17 @@ interface OnboardingTourProps {
 }
 
 export function OnboardingTour({ onRegisterTrigger }: OnboardingTourProps) {
+  const driverRef = useRef<Driver | null>(null);
+
   const startTour = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (driverRef.current) {
+      try {
+        driverRef.current.destroy();
+      } catch {}
+    }
     const d = createDetectiveTour();
+    driverRef.current = d;
     d.drive();
   }, []);
 
@@ -109,7 +142,6 @@ export function OnboardingTour({ onRegisterTrigger }: OnboardingTourProps) {
       onRegisterTrigger(startTour);
     }
 
-    // Support custom window event trigger
     const handleCustomTrigger = () => {
       startTour();
     };
@@ -127,6 +159,20 @@ export function OnboardingTour({ onRegisterTrigger }: OnboardingTourProps) {
     return () => {
       if (timer) clearTimeout(timer);
       window.removeEventListener("start-detective-tour", handleCustomTrigger);
+      if (driverRef.current) {
+        try {
+          driverRef.current.destroy();
+        } catch {}
+      }
+      document.body.classList.remove(
+        "driver-active",
+        "driver-fade",
+        "driver-simple",
+        "driver-no-scroll"
+      );
+      document
+        .querySelectorAll(".driver-overlay, .driver-popover")
+        .forEach((el) => el.remove());
     };
   }, [startTour, onRegisterTrigger]);
 

@@ -50,9 +50,10 @@ RULES:
 2. If the detective presents physical evidence against you or catches you in a contradiction, your stress/nervousness will surge.
 3. If you are innocent, defend your innocence or explain your suspicious actions if cornered, but never admit to murder.
 4. If you are the killer, deflect, stay calm or subtly mislead, but crack if presented with undeniable evidence according to your secret instructions.
-5. You must return valid JSON ONLY with the exact schema:
+5. Keep your spoken reply punchy and concise (1 to 3 sentences maximum). Keep all JSON string values brief so the response is fast and razor-sharp.
+6. You must return valid JSON ONLY with the exact schema:
 {
-  "reply": "Your in-character spoken dialogue and descriptive actions",
+  "reply": "Your in-character spoken dialogue and descriptive actions (1-3 sentences)",
   "nervousness": <integer from 0 to 100 representing your current stress, heart rate spike, and agitation>
 }`;
 
@@ -89,8 +90,9 @@ RULES:
       messages: formattedMessages,
       response_format: { type: "json_object" },
       temperature: 0.7,
-      max_tokens: 1024,
-    });
+      max_completion_tokens: 2048,
+      reasoning_effort: "low",
+    } as any);
 
     const rawContent = completion.choices[0]?.message?.content || "{}";
     let parsed: { reply: string; nervousness: number };

@@ -62,10 +62,12 @@ export function InterrogationRoom({
     }
   }, [prefilledPrompt, onClearPrefilledPrompt]);
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom only when there are messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages.length, isLoading]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();

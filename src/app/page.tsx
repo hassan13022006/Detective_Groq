@@ -20,6 +20,8 @@ import {
   ForensicsResult,
   VerdictResult,
   NotebookEntry,
+  CaseArchiveItem,
+  CaseAttempt,
 } from "@/types/mystery";
 import { Header } from "@/components/Header";
 import { VictimCard } from "@/components/VictimCard";
@@ -30,6 +32,8 @@ import { ForensicsModal } from "@/components/ForensicsModal";
 import { NotebookDrawer } from "@/components/NotebookDrawer";
 import { VerdictModal } from "@/components/VerdictModal";
 import { ApiKeyModal } from "@/components/ApiKeyModal";
+import { ResetAppModal } from "@/components/ResetAppModal";
+import { CaseHistorySection } from "@/components/CaseHistorySection";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { soundFX } from "@/lib/soundEffects";
 
@@ -66,7 +70,11 @@ export default function Home() {
   // Modals
   const [verdictModalOpen, setVerdictModalOpen] = useState(false);
   const [apiKeyModalOpen, setApiKeyModalOpen] = useState(false);
+  const [resetAppModalOpen, setResetAppModalOpen] = useState(false);
   const [isGeneratingCase, setIsGeneratingCase] = useState(false);
+
+  // Case Archive & Attempt Log
+  const [caseHistory, setCaseHistory] = useState<CaseArchiveItem[]>([]);
 
   // Custom API Key in client localStorage (if user doesn't use .env.local)
   const [customApiKey, setCustomApiKey] = useState<string>("");
@@ -74,11 +82,20 @@ export default function Home() {
   // Tour trigger reference
   const tourTriggerRef = useRef<(() => void) | null>(null);
 
-  // Load custom key from localStorage on mount
+  // Load custom key and case history from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedKey = localStorage.getItem("detective_groq_api_key");
       if (storedKey) setCustomApiKey(storedKey);
+
+      const storedHistory = localStorage.getItem("detectives_desk_case_history");
+      if (storedHistory) {
+        try {
+          setCaseHistory(JSON.parse(storedHistory));
+        } catch {
+          setCaseHistory([]);
+        }
+      }
     }
   }, []);
 
@@ -137,6 +154,23 @@ export default function Home() {
         } else {
           setNotebookEntries([]);
         }
+
+        // Ensure this case is registered in caseHistory
+        setCaseHistory((prev) => {
+          const exists = prev.some((item) => item.case_id === data.case_data.case_id);
+          if (exists) return prev;
+          const newItem: CaseArchiveItem = {
+            case_id: data.case_data.case_id,
+            case_title: data.case_data.case_title,
+            case_data: data.case_data,
+            attempts: [],
+            is_solved: false,
+            created_at: Date.now(),
+          };
+          const updated = [...prev, newItem];
+          localStorage.setItem("detectives_desk_case_history", JSON.stringify(updated));
+          return updated;
+        });
       }
     } catch (err: any) {
       setCaseError(err?.message || "Failed to load case dossier");
@@ -200,9 +234,6 @@ export default function Home() {
   ) => {
     if (!caseData || actionPoints <= 0) return;
 
-    // Deduct 1 Action Point per question
-    setActionPoints((prev) => Math.max(0, prev - 1));
-
     const clueObj = caseData.clues.find((c) => c.id === presentedClueId);
 
     const userMsg: ChatMessage = {
@@ -242,6 +273,9 @@ export default function Home() {
       if (!res.ok) {
         throw new Error(data.error || "Failed to interrogate suspect");
       }
+
+      // Deduct 1 Action Point only upon successful response
+      setActionPoints((prev) => Math.max(0, prev - 1));
 
       const assistantMsg: ChatMessage = {
         id: `assistant_${Date.now()}`,
@@ -296,8 +330,6 @@ export default function Home() {
       return;
     }
 
-    // Deduct 2 Action Points
-    setActionPoints((prev) => Math.max(0, prev - 2));
     setScanningClueId(clueId);
 
     try {
@@ -315,6 +347,9 @@ export default function Home() {
         throw new Error(data.error || "Forensic scan failed");
       }
 
+      // Deduct 2 Action Points only upon successful response
+      setActionPoints((prev) => Math.max(0, prev - 2));
+
       setForensicsResults((prev) => ({
         ...prev,
         [clueId]: data,
@@ -326,6 +361,19 @@ export default function Home() {
       setScanningClueId(null);
     }
   };
+
+  // Re-attempt Case Handler
+  const handleReattemptCase = useCallback(
+    async (targetCaseId?: string) => {
+      const idToLoad = targetCaseId || caseData?.case_id;
+      if (!idToLoad) return;
+      await loadCase(idToLoad);
+      setActiveMainTab("dossier");
+      setVerdictModalOpen(false);
+      soundFX.playPaperRustle();
+    },
+    [caseData?.case_id, loadCase]
+  );
 
   // Verdict Submission
   const handleSubmitVerdict = async (
@@ -353,20 +401,150 @@ export default function Home() {
       if (!res.ok) {
         throw new Error(data.error || "Chief verdict grading failed");
       }
-      return data as VerdictResult;
+      const verdict = data as VerdictResult;
+
+      // Record this attempt in Case History
+      const accusedSuspect = caseData.suspects.find((s) => s.id === accusedId);
+      const accusedName = accusedSuspect ? accusedSuspect.name : accusedId;
+
+      setCaseHistory((prev) => {
+        const caseIndex = prev.findIndex((item) => item.case_id === caseData.case_id);
+        const existingItem: CaseArchiveItem =
+          caseIndex >= 0
+            ? prev[caseIndex]
+            : {
+                case_id: caseData.case_id,
+                case_title: caseData.case_title,
+                case_data: caseData,
+                attempts: [],
+                is_solved: false,
+                created_at: Date.now(),
+              };
+
+        const newAttempt: CaseAttempt = {
+          attempt_number: existingItem.attempts.length + 1,
+          is_correct: verdict.is_correct,
+          score: verdict.score,
+          accused_name: accusedName,
+          timestamp: Date.now(),
+        };
+
+        const updatedItem: CaseArchiveItem = {
+          ...existingItem,
+          is_solved: existingItem.is_solved || verdict.is_correct,
+          attempts: [...existingItem.attempts, newAttempt],
+        };
+
+        const updatedHistory =
+          caseIndex >= 0
+            ? prev.map((item, idx) => (idx === caseIndex ? updatedItem : item))
+            : [...prev, updatedItem];
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            "detectives_desk_case_history",
+            JSON.stringify(updatedHistory)
+          );
+        }
+        return updatedHistory;
+      });
+
+      return verdict;
     } catch (err: any) {
       alert(`Chief Henderson could not review your warrant: ${err.message}. Check GROQ_API_KEY.`);
       return null;
     }
   };
 
+  // Delete individual case from history
+  const handleDeleteCase = useCallback(
+    async (caseIdToDelete: string) => {
+      soundFX.playPaperRustle();
+      const updatedHistory = caseHistory.filter((item) => item.case_id !== caseIdToDelete);
+      setCaseHistory(updatedHistory);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("detectives_desk_case_history", JSON.stringify(updatedHistory));
+        localStorage.removeItem(`detective_notebook_${caseIdToDelete}`);
+      }
+
+      // If the user deleted the active case, reload the starter case
+      if (caseData?.case_id === caseIdToDelete) {
+        await loadCase(); // Loads default SEED_CASE
+        setActiveMainTab("dossier");
+      }
+    },
+    [caseHistory, caseData?.case_id, loadCase]
+  );
+
+  // 2-Step Full App Reset Handler
+  const handleFullAppReset = useCallback(async () => {
+    try {
+      // 1. Tell backend to reset case store to starter seed
+      await fetch("/api/reset-app", { method: "POST" });
+    } catch (err) {
+      console.error("Error resetting server case store:", err);
+    }
+
+    if (typeof window !== "undefined") {
+      // 2. Clear all game localStorage keys, preserving custom API key
+      const preservedApiKey = localStorage.getItem("detective_groq_api_key");
+      
+      // Remove all detective-related keys
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (
+          k &&
+          (k.startsWith("detective_") ||
+            k.startsWith("detectives_desk_")) &&
+          k !== "detective_groq_api_key"
+        ) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+      if (preservedApiKey) {
+        localStorage.setItem("detective_groq_api_key", preservedApiKey);
+      }
+    }
+
+    // 3. Reset all React state to fresh defaults
+    setCaseHistory([]);
+    setNotebookEntries([]);
+    setChatHistories({});
+    setSuspectNervousness({});
+    setForensicsResults({});
+    setActionPoints(INITIAL_ACTION_POINTS);
+    setActiveMainTab("dossier");
+    setVerdictModalOpen(false);
+
+    // 4. Reload default seed case
+    await loadCase();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [loadCase]);
+
   // Generate New Solvable Mystery
   const handleGenerateNewCase = async () => {
     setIsGeneratingCase(true);
     try {
+      // Collect past titles and past names to avoid repeats
+      const usedTitles = caseHistory.map((c) => c.case_title);
+      const usedNames: string[] = [];
+      caseHistory.forEach((c) => {
+        if (c.case_data?.victim?.name) usedNames.push(c.case_data.victim.name);
+        c.case_data?.suspects?.forEach((s) => {
+          if (s.name) usedNames.push(s.name);
+        });
+      });
+
       const res = await fetch("/api/generate-case", {
         method: "POST",
         headers: getRequestHeaders(),
+        body: JSON.stringify({
+          usedTitles,
+          usedNames,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -384,6 +562,27 @@ export default function Home() {
       setNotebookEntries([]);
       setActiveMainTab("dossier");
       setVerdictModalOpen(false);
+
+      // Add to Case History
+      setCaseHistory((prev) => {
+        const newItem: CaseArchiveItem = {
+          case_id: data.case_data.case_id,
+          case_title: data.case_data.case_title,
+          case_data: data.case_data,
+          attempts: [],
+          is_solved: false,
+          created_at: Date.now(),
+        };
+        const updated = [...prev, newItem];
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            "detectives_desk_case_history",
+            JSON.stringify(updated)
+          );
+        }
+        return updated;
+      });
+
       soundFX.playStamp();
     } catch (err: any) {
       alert(`Failed to generate new mystery: ${err.message}. Ensure GROQ_API_KEY is configured.`);
@@ -398,7 +597,10 @@ export default function Home() {
   ) || null;
 
   return (
-    <div className="min-h-screen bg-noir-950 text-noir-100 flex flex-col noir-vignette scanlines relative">
+    <div className="min-h-screen bg-noir-950 text-noir-100 flex flex-col noir-vignette relative pointer-events-auto">
+      {/* Decorative CRT scanline effect on background layer so clicks are never blocked */}
+      <div className="pointer-events-none fixed inset-0 -z-10 scanlines opacity-40" aria-hidden="true" />
+
       {/* Interactive Onboarding Walkthrough */}
       <OnboardingTour
         onRegisterTrigger={(triggerFn) => {
@@ -414,6 +616,7 @@ export default function Home() {
         onOpenVerdict={() => setVerdictModalOpen(true)}
         onGenerateNewCase={handleGenerateNewCase}
         onOpenApiKeyModal={() => setApiKeyModalOpen(true)}
+        onOpenResetApp={() => setResetAppModalOpen(true)}
         onStartTour={() => {
           if (tourTriggerRef.current) {
             tourTriggerRef.current();
@@ -427,7 +630,7 @@ export default function Home() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10 pointer-events-auto">
         {/* Navigation Tabs (Case Dossier vs Interrogation Room) */}
         <div className="flex items-center justify-between border-b border-noir-800 pb-2">
           <div className="flex items-center gap-2">
@@ -437,7 +640,7 @@ export default function Home() {
                 soundFX.playPaperRustle();
                 setActiveMainTab("dossier");
               }}
-              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition ${
+              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition cursor-pointer pointer-events-auto ${
                 activeMainTab === "dossier"
                   ? "bg-noir-850 text-amber-400 border border-noir-700 shadow-md"
                   : "text-noir-400 hover:text-noir-200 hover:bg-noir-900"
@@ -452,8 +655,9 @@ export default function Home() {
               onClick={() => {
                 soundFX.playPaperRustle();
                 setActiveMainTab("interrogation");
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition ${
+              className={`px-4 py-2 rounded text-xs font-typewriter font-bold flex items-center gap-2 transition cursor-pointer pointer-events-auto ${
                 activeMainTab === "interrogation"
                   ? "bg-noir-850 text-amber-400 border border-noir-700 shadow-md"
                   : "text-noir-400 hover:text-noir-200 hover:bg-noir-900"
@@ -487,7 +691,7 @@ export default function Home() {
             <p>{caseError}</p>
             <button
               onClick={() => loadCase()}
-              className="px-3 py-1 bg-rose-900 text-rose-100 rounded text-xs font-bold uppercase hover:bg-rose-800"
+              className="px-3 py-1 bg-rose-900 text-rose-100 rounded text-xs font-bold uppercase hover:bg-rose-800 cursor-pointer pointer-events-auto"
             >
               Retry Opening File
             </button>
@@ -564,6 +768,7 @@ export default function Home() {
                     onInterrogate={(id) => {
                       setActiveSuspectId(id);
                       setActiveMainTab("interrogation");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                   />
                 ))}
@@ -589,6 +794,14 @@ export default function Home() {
             onClearPrefilledPrompt={() => setPrefilledPrompt("")}
           />
         )}
+
+        {/* Case Archive & Attempt Log (Bottom of Main Page) */}
+        <CaseHistorySection
+          caseHistory={caseHistory}
+          activeCaseId={caseData?.case_id || ""}
+          onReattemptCase={handleReattemptCase}
+          onDeleteCase={handleDeleteCase}
+        />
       </main>
 
       {/* Persistent Detective's Notebook Drawer */}
@@ -610,6 +823,7 @@ export default function Home() {
           setActiveForensicsModalClueId(null);
           setActiveMainTab("interrogation");
           setPrefilledPrompt(question);
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }}
       />
 
@@ -621,6 +835,7 @@ export default function Home() {
           suspects={caseData.suspects}
           onSubmitVerdict={handleSubmitVerdict}
           onNewMystery={handleGenerateNewCase}
+          onReattemptCase={() => handleReattemptCase(caseData.case_id)}
         />
       )}
 
@@ -630,6 +845,13 @@ export default function Home() {
         onClose={() => setApiKeyModalOpen(false)}
         apiKey={customApiKey}
         onSaveKey={saveCustomApiKey}
+      />
+
+      {/* 2-Step Full App Reset Confirmation Modal */}
+      <ResetAppModal
+        isOpen={resetAppModalOpen}
+        onClose={() => setResetAppModalOpen(false)}
+        onConfirmReset={handleFullAppReset}
       />
     </div>
   );

@@ -42,6 +42,13 @@ export interface ForensicsResult {
   followup_question: string;
 }
 
+export interface TrueSolution {
+  killer_name: string;
+  motive: string;
+  method: string;
+  full_truth: string;
+}
+
 export interface VerdictResult {
   is_correct: boolean;
   score: number; // 0 - 100
@@ -52,6 +59,7 @@ export interface VerdictResult {
     method_accuracy: number;
     timeline_accuracy: number;
   };
+  true_solution?: TrueSolution;
 }
 
 export interface NotebookEntry {
@@ -63,4 +71,21 @@ export interface NotebookEntry {
     timestamp: number;
   };
   createdAt: number;
+}
+
+export interface CaseAttempt {
+  attempt_number: number;
+  is_correct: boolean;
+  score: number;
+  accused_name: string;
+  timestamp: number;
+}
+
+export interface CaseArchiveItem {
+  case_id: string;
+  case_title: string;
+  case_data: PublicCaseData;
+  created_at: number;
+  attempts: CaseAttempt[];
+  is_solved?: boolean;
 }

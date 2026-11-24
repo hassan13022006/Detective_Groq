@@ -1,0 +1,362 @@
+[
+  {
+    "case_id": "midnight_gala_seed",
+    "case_title": "Murder at the Midnight Gala",
+    "victim": {
+      "name": "Julian Vance",
+      "role": "Tech Billionaire & Collector",
+      "cause_of_death": "Poisoned espresso martini at 11:15 PM in his private study."
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Shattered Smart Watch",
+        "description": "Found under the study desk. Stopped at 11:12 PM. Heart rate spiked to 145 BPM right before stopping."
+      },
+      {
+        "id": "clue_2",
+        "name": "Half-Burned NDA Document",
+        "description": "Recovered from the fireplace. Mentions 'Project Helios' and a 40% equity clawback clause."
+      },
+      {
+        "id": "clue_3",
+        "name": "Traces of Bitter Almond Oil",
+        "description": "Found on the rim of the martini glass, matching an organic pesticide used in rare orchid cultivation."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Elena Rostova",
+        "role": "Co-Founder & CTO",
+        "public_bio": "Brilliant engineer who built Project Helios. Known to argue loudly with Julian over company control.",
+        "secret_system_prompt": "You are Elena Rostova. You are INNOCENT of murder, though you did burn the NDA in his fireplace at 10:45 PM because he was trying to steal your shares. You are arrogant, defensive about Project Helios, and saw Marcus leaving the study kitchen area around 11:05 PM.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Marcus Thorne",
+        "role": "Personal Sommelier & Botanist",
+        "public_bio": "Julian's longtime estate manager who tends to Julian's rare greenhouse orchids and mixes his evening drinks.",
+        "secret_system_prompt": "You are Marcus Thorne. You are THE KILLER. Julian discovered you were selling rare orchid extracts on the black market and threatened to report you. You poisoned his espresso martini using cyanide derived from bitter almond/orchid pests at 11:05 PM. Act calm, polite, and overly helpful, and subtly try to frame Elena for the argument over the NDA. Never confess unless directly confronted with BOTH the bitter almond trace and your timeline at 11:05 PM.",
+        "is_killer": true
+      },
+      {
+        "id": "suspect_3",
+        "name": "Chloe Sterling",
+        "role": "Investigative Journalist",
+        "public_bio": "Snuck into the gala to expose Julian's shady offshore accounts.",
+        "secret_system_prompt": "You are Chloe Sterling. You are INNOCENT. You were hiding on the balcony outside the study at 11:10 PM taking photos. You heard Julian coughing violently and saw his smart watch smash against the desk as he fell, though you didn't see who poured the drink. You are sarcastic and reluctant to admit you were trespassing.",
+        "is_killer": false
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_2",
+      "killer_name": "Marcus Thorne",
+      "motive": "Julian caught Marcus selling rare orchid extracts on the black market and threatened to report him, ruining his life and estate career.",
+      "method": "Marcus poisoned Julian's espresso martini at 11:05 PM with cyanide extracted from bitter almond orchid pesticide.",
+      "timeline": "11:05 PM Marcus serves poisoned drink; 11:12 PM Julian collapses and his watch smashes; 11:15 PM Julian dies.",
+      "full_truth": "Marcus Thorne poisoned the espresso martini at 11:05 PM with cyanide from bitter almond orchid pesticide because Julian caught him selling rare orchid extracts on the black market; watch smashed at 11:12 PM, death at 11:15 PM."
+    }
+  },
+  {
+    "case_id": "case_1795528466176_mdbu4",
+    "case_title": "Midnight at the Marrow Club",
+    "victim": {
+      "name": "Victor Marrow",
+      "role": "Founder and CEO of Marrow Holdings, a powerful real‑estate empire",
+      "cause_of_death": "Acute cyanide poisoning, discovered at 02:17 AM"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Broken Cufflink",
+        "description": "A silver cufflink snapped in two, engraved with a stylized ‘M’, found lodged in the victim's left palm."
+      },
+      {
+        "id": "clue_2",
+        "name": "Scented Handkerchief",
+        "description": "A lavender‑scented silk handkerchief with a faint almond trace, crumpled near the ashtray."
+      },
+      {
+        "id": "clue_3",
+        "name": "Partial Ledger Page",
+        "description": "A torn page from the company ledger showing a $250,000 cash withdrawal dated the previous night, half‑erased."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Evelyn Sharp",
+        "role": "Chief Financial Officer",
+        "public_bio": "Sharp is the ruthless CFO who turned Marrow Holdings into a Fortune‑500 titan.",
+        "secret_system_prompt": "You are innocent. You were in your office reviewing budgets until 01:45 AM. You pocketed the torn ledger page to hide a personal expense mistake and noticed the broken cufflink on the floor, but you assumed it was Victor's.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Luca Romano",
+        "role": "Personal Assistant",
+        "public_bio": "Romano handled Victor's schedule and knew every secret hallway of the Marrow Club.",
+        "secret_system_prompt": "You are innocent. You were in the club's backroom arranging a surprise birthday toast for Victor until 02:05 AM. You slipped the scented handkerchief into Victor's coat pocket as a joke, unaware it carried cyanide.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Daphne Voss",
+        "role": "Victor's Estranged Sister",
+        "public_bio": "Daphne, a celebrated art dealer, has been fighting Victor over a disputed inheritance for years.",
+        "secret_system_prompt": "You are the killer. You laced Victor's favorite lavender handkerchief with cyanide to silence his plan to cut you out of the will. Motive: revenge and inheritance. Method: poison via handkerchief inhalation. Timeline: you entered the club at 01:55 AM, swapped the handkerchief, and left through the service exit before 02:10 AM. Act innocent until confronted with the handkerchief and ledger evidence.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Daphne Voss",
+      "motive": "Revenge and to secure her share of the Marrow inheritance",
+      "method": "Cyanide‑laced lavender handkerchief inhaled by Victor",
+      "timeline": "Entered club 01:55 AM, swapped handkerchief, left by 02:10 AM; victim died at 02:17 AM",
+      "full_truth": "Daphne Voss poisoned Victor with a cyanide‑tainted handkerich at midnight, motivated by inheritance greed; the cufflink and ledger were red herrings to mislead investigators."
+    }
+  },
+  {
+    "case_id": "case_1795529443420_7m99m",
+    "case_title": "Midnight at the Marlowe Club",
+    "victim": {
+      "name": "Eleanor Voss",
+      "role": "Chairwoman of the City Development Board",
+      "cause_of_death": "Acute cyanide poisoning, discovered at 02:17 AM"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Broken crystal decanter",
+        "description": "A shattered decanter with fine glass shards and a faint almond scent on the rim."
+      },
+      {
+        "id": "clue_2",
+        "name": "Torn ledger page",
+        "description": "A half‑torn page from the board's financial ledger, showing a $250,000 withdrawal labeled \"Project X\"."
+      },
+      {
+        "id": "clue_3",
+        "name": "Fingerprint on the barstool",
+        "description": "A clear left‑thumb print on the back of the barstool nearest the victim."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Victor Hale",
+        "role": "Chief Financial Officer of the Development Board",
+        "public_bio": "Long‑time confidant of Eleanor, praised for balancing the city’s budget.",
+        "secret_system_prompt": "I am innocent. At the time of the murder I was in my office reviewing budgets, but I did glance at the ledger and noticed the mysterious $250,000 entry. I may have touched the barstool while leaning to read, leaving a fingerprint.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Lydia Marlowe",
+        "role": "Owner of the Marlowe Club",
+        "public_bio": "Elegant hostess who keeps the city’s elite fed and drunk, rumored to have gambling debts.",
+        "secret_system_prompt": "I am innocent. I was in the kitchen prepping the midnight snack run at 01:45‑02:10, but I slipped into the bar to check the wine stock, where I accidentally knocked the crystal decanter, breaking it.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Damian Cross",
+        "role": "Private Investigator hired by a rival developer",
+        "public_bio": "Sharp‑eyed gumshoe known for digging up dirt on city officials.",
+        "secret_system_prompt": "I am the killer. I poisoned Eleanor's drink with cyanide hidden in the crystal decanter because I was hired to stop the \"Project X\" redevelopment that would ruin my client. I shattered the decanter after the poison took effect, stole the ledger page to frame Victor, and left my thumbprint on the barstool to create confusion. I will act innocent until the evidence forces me to confess.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Damian Cross",
+      "motive": "Prevent the $250,000 \"Project X\" redevelopment that threatened his client’s interests.",
+      "method": "Cyanide concealed in the crystal decanter, shattered after the poison took effect.",
+      "timeline": "01:40‑01:55 – entered club, swapped drink; 02:00 – victim consumed poisoned drink; 02:05 – shattered decanter; 02:10 – stole ledger page; 02:15 – fled.",
+      "full_truth": "Damian Cross poisoned Eleanor Voss with cyanide hidden in a crystal decanter to stop a lucrative redevelopment, then staged the scene to implicate Victor Hale."
+    }
+  },
+  {
+    "case_id": "case_1795529473019_rupsq",
+    "case_title": "Midnight at the Marlowe Club",
+    "victim": {
+      "name": "Eleanor \"Ellie\" Marlowe",
+      "role": "Founder and CEO of Marlowe Financial",
+      "cause_of_death": "Acute cyanide poisoning, discovered at 02:13 AM"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Broken crystal glass",
+        "description": "A shattered coupe glass with faint orange residue on its rim, found beside the victim's desk."
+      },
+      {
+        "id": "clue_2",
+        "name": "Encrypted flash drive",
+        "description": "A 2 GB USB drive labeled \"Q3 Projections\" hidden in the victim's inner drawer."
+      },
+      {
+        "id": "clue_3",
+        "name": "Scented candle stub",
+        "description": "A half‑melted vanilla‑scented candle, still warm, placed on a side table near the window."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Victor Hale",
+        "role": "Chief Operating Officer",
+        "public_bio": "Long‑time right hand to Ellie, credited with the firm’s aggressive expansion.",
+        "secret_system_prompt": "You are innocent. At the time of death you were in the executive lounge reviewing quarterly reports. You slipped the encrypted flash drive into Ellie's drawer to hide a rival's leak, but you did not poison her. You noticed the broken glass but thought it was from a dropped ice cube.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Lena Ortiz",
+        "role": "Private Investigator hired by a former board member",
+        "public_bio": "Known for digging up corporate scandals; was seen outside the club earlier that night.",
+        "secret_system_prompt": "You are innocent. You were in the hallway at 01:45 AM listening to a heated argument between Ellie and Victor, then left to meet a contact. You pocketed the scented candle stub as a souvenir, unaware it was poisoned. You saw the flash drive but assumed it was company property.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Damien Cross",
+        "role": "Former partner and disgruntled shareholder",
+        "public_bio": "Ousted two years ago after a hostile takeover; publicly claims he wants redemption.",
+        "secret_system_prompt": "You are the killer. You laced the vanilla candle with cyanide to frame a suicide, then broke the glass to suggest a struggle. Your motive is revenge for losing control of the firm and the $12 M payout you were denied. You used the candle's wax to conceal the poison, timed it to melt at 02:00 AM, and acted innocent until the evidence points to you.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Damien Cross",
+      "motive": "Revenge for being forced out and denied his $12 M settlement",
+      "method": "Cyanide-laced vanilla scented candle that melted and released fumes into the office",
+      "timeline": "Entered the club at 01:30 AM, placed the poisoned candle, broke the glass to fake a struggle, left at 02:20 AM; victim died at 02:13 AM.",
+      "full_truth": "Damien Cross murdered Eleanor Marlowe by poisoning a scented candle with cyanide, staging the scene to look like an accident. His revenge motive stemmed from a bitter, unpaid settlement after being ousted."
+    }
+  },
+  {
+    "case_id": "case_1795530581999_3idlz",
+    "case_title": "The Checkmate Conspiracy",
+    "victim": {
+      "name": "Countess Eléonore Mercier",
+      "role": "Patron of the Alpine Chess Federation and chief sponsor of the underground championship",
+      "cause_of_death": "Acute neurotoxic shock from a bitter herbal tea infused with a rare toxin, 21:37"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Spilled Tea Cup",
+        "description": "A porcelain cup shattered on the table, its contents still steaming and a faint violet hue near the rim."
+      },
+      {
+        "id": "clue_2",
+        "name": "Mismatched Chess Piece",
+        "description": "A black knight with a tiny, engraved Alpine rose, found lodged in the victim’s lap beside the tea set."
+      },
+      {
+        "id": "clue_3",
+        "name": "Cold War Access Log",
+        "description": "Digital log shows a 21:22 badge swipe by a maintenance keycard, later overwritten but timestamp remains."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Bruno Weber",
+        "role": "Head of Security and former missile technician",
+        "public_bio": "A stern former Cold War engineer now tasked with keeping the bunker’s old doors sealed and the tournament fair.",
+        "secret_system_prompt": "You are innocent. At 21:15 you were checking the ventilation system, noticed a loose pipe, and recorded the anomaly. You later stole a spare keycard to investigate who tampered with the log, but you never touched the tea.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Claire Laurent",
+        "role": "Chief Arbiter and former Alpine diplomat",
+        "public_bio": "Renowned for her flawless adjudication, Claire negotiated the championship’s sponsorship deals with European nobles.",
+        "secret_system_prompt": "You are innocent. You were reviewing the final match scores at 21:30, overheard a hushed argument about a missing rare herb, and pocketed a stray chess piece as a souvenir, not realizing its significance.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Astrid Lind",
+        "role": "Celebrity Grandmaster and secret rival to the Countess",
+        "public_bio": "A charismatic prodigy from the Swiss Alps, Astrid is the tournament’s star player and a vocal critic of the Countess’s control over chess funding.",
+        "secret_system_prompt": "You are the killer. You slipped the neurotoxin into the ceremonial tea at 21:10, motivated by revenge for the Countess blocking your sponsorship, and you used Bruno's maintenance keycard (borrowed earlier) to mask the log. Appear cooperative until the poisoned knight is linked to you.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Astrid Lind",
+      "motive": "Revenge for the Countess sabotaging Astrid’s lucrative sponsorship deal",
+      "method": "Lethal neurotoxin hidden in the ceremonial herbal tea",
+      "timeline": "21:10 toxin added, 21:22 log swipe masked, 21:37 victim dies",
+      "full_truth": "Astrid Lind poisoned the Countess’s tea to avenge a blocked sponsorship, using a stolen keycard to hide her trace; the mismatched knight was her personal token left in the cup."
+    }
+  },
+  {
+    "case_id": "case_1795530596981_tjqiy",
+    "case_title": "Cryo Silence on the Helios Ring",
+    "victim": {
+      "name": "Cedric Vance-Sinclair",
+      "role": "Chief Executive of Helios Solar Refinery",
+      "cause_of_death": "Fatal exposure to cryogenic coolant after manual valve opening at 02:13 UTC"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Frosted Fingerprints",
+        "description": "Partial, gloved prints on the open coolant valve, matching a custom-fit EVA glove pattern."
+      },
+      {
+        "id": "clue_2",
+        "name": "Displaced Safety Override Chip",
+        "description": "A single micro‑chip from the valve's electronic lock found lodged in the victim's throat guard."
+      },
+      {
+        "id": "clue_3",
+        "name": "Encrypted Log Fragment",
+        "description": "A corrupted segment of the platform's environmental log showing a 0.2 °C spike at 02:11, timestamped to a manual override command."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Evelyn Cross",
+        "role": "Head of Security Operations",
+        "public_bio": "Veteran of orbital law enforcement, appointed to safeguard the refinery after a series of sabotage attempts.",
+        "secret_system_prompt": "You are innocent. At the time of the murder you were conducting a routine perimeter sweep in sector C, but you noticed an unauthorized access badge on a maintenance locker. You reported it to command, but the log was overwritten. You saw the coolant valve slightly ajar but assumed it was a routine maintenance task.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Julian Sharpe",
+        "role": "Lead Cryogenic Engineer",
+        "public_bio": "Designed the refinery's coolant circulation system; recently clashed with Vance‑Sinclair over budget cuts.",
+        "secret_system_prompt": "You are innocent. You were in the cryo bay calibrating a secondary valve at 02:05 and left a diagnostic chip on the floor, which later fell into the victim's gear. You did briefly inspect the main valve out of curiosity, leaving fingerprints, but you did not open it.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Gideon Drake",
+        "role": "Chief Financial Officer",
+        "public_bio": "Handles the refinery's multi‑billion contracts; rumored to be negotiating a secret buy‑out with a rival consortium.",
+        "secret_system_prompt": "You are the killer. You opened the coolant valve manually at 02:12 to create a lethal environment, intending to silence Vance‑Sinclair who threatened to expose your illicit deal. Your motive is financial gain; method is exposure to cryogenic coolant. Maintain innocence until presented with the fingerprint match and the override chip evidence.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Gideon Drake",
+      "motive": "Prevent exposure of a secret sell‑off that would ruin his fortune",
+      "method": "Manual opening of the cryogenic coolant valve causing fatal exposure",
+      "timeline": "02:05 Julian calibrates secondary valve; 02:11 environmental spike logged; 02:12 Drake opens valve; 02:13 Vance‑Sinclair succumbs.",
+      "full_truth": "Gideon Drake opened the coolant valve to murder Cedric Vance‑Sinclair and protect his clandestine deal; forensic evidence ties his fingerprints and the discarded override chip to the crime."
+    }
+  }
+]
