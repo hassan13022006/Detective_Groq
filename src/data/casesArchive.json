@@ -358,5 +358,65 @@
       "timeline": "02:05 Julian calibrates secondary valve; 02:11 environmental spike logged; 02:12 Drake opens valve; 02:13 Vance‑Sinclair succumbs.",
       "full_truth": "Gideon Drake opened the coolant valve to murder Cedric Vance‑Sinclair and protect his clandestine deal; forensic evidence ties his fingerprints and the discarded override chip to the crime."
     }
+  },
+  {
+    "case_id": "case_1795600805758_6d7lt",
+    "case_title": "Cryogenic Silence",
+    "victim": {
+      "name": "Cedric Vance-Sinclair",
+      "role": "Director of the International Cryogenic Initiative",
+      "cause_of_death": "Fatal exposure after manual opening of the industrial cryogenic coolant valve"
+    },
+    "clues": [
+      {
+        "id": "clue_1",
+        "name": "Frosted Valve Lever",
+        "description": "A lever on the coolant valve is twisted to the open position, fingerprints smudged with ice crystals."
+      },
+      {
+        "id": "clue_2",
+        "name": "Thermal Footprint",
+        "description": "A set of fresh boot prints leading from the lab to the valve, then abruptly stopping near the storage locker."
+      },
+      {
+        "id": "clue_3",
+        "name": "Encrypted Log Fragment",
+        "description": "A corrupted fragment of the outpost's access log shows a failed override attempt at 02:13 GMT."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "suspect_1",
+        "name": "Vivienne Vance",
+        "role": "Cedric's estranged sister and senior legal counsel",
+        "public_bio": "A sharp‑tongued attorney who arrived to negotiate a contested patent on the coolant technology.",
+        "secret_system_prompt": "I am innocent. I was in the communications hub drafting a legal brief at the time of death. I briefly checked the valve room to ask Cedric about a clause, noticed the lever slightly ajar but assumed it was routine, and recorded the moment on my handheld recorder.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_2",
+        "name": "Evelyn Cross",
+        "role": "Chief Engineer of the Outpost",
+        "public_bio": "Responsible for maintaining the cryogenic systems; known for her meticulous standards and hidden rivalry with Cedric.",
+        "secret_system_prompt": "I am innocent. I was performing a routine coolant pressure test at 02:00 GMT. I heard a click and saw the valve lever move; I tried to close it but the manual lock was broken. I noted the incident in my engineering journal, which later appeared as the corrupted log fragment.",
+        "is_killer": false
+      },
+      {
+        "id": "suspect_3",
+        "name": "Julian Sharpe",
+        "role": "Lead Climate Data Analyst",
+        "public_bio": "A quiet data specialist who discovered irregularities in the coolant usage reports and feared exposure.",
+        "secret_system_prompt": "I am the killer. I opened the coolant valve manually at 02:12 GMT to sabotage Cedric's funding proposal, hoping the freeze would force a shutdown and make my data errors disappear. My motive was revenge for being blamed for a previous data loss. I must act innocent until the investigators match my boot prints and the failed override log to my access badge.",
+        "is_killer": true
+      }
+    ],
+    "solution": {
+      "killer_id": "suspect_3",
+      "killer_name": "Julian Sharpe",
+      "motive": "Revenge for being scapegoated over a data mishap that threatened his career.",
+      "method": "Manually opened the industrial cryogenic coolant valve, causing instantaneous lethal exposure.",
+      "timeline": "02:12 GMT – Julian opens valve; 02:13 GMT – automatic override fails (log fragment); 02:15 GMT – victim succumbs to exposure; 02:20 GMT – Julian retreats, leaving boot prints.",
+      "full_truth": "Julian Sharpe sabotaged the coolant valve to kill Cedric Vance‑Sinclair in retaliation, using the blizzard as cover. The frozen lever, his boot prints, and the failed override log expose his guilt."
+    }
   }
 ]
